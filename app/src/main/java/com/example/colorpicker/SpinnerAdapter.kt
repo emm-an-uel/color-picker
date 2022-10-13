@@ -15,18 +15,18 @@ import androidx.core.widget.ImageViewCompat
 class SpinnerAdapter(context: Context, colorCodeList: ArrayList<ColorCode>)
     : ArrayAdapter<ColorCode>(context, 0, colorCodeList) {
 
-    override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+    override fun getView(position: Int, convertView: View?, parent: ViewGroup): View { // required method
         return myView(position, convertView, parent)
     }
 
-    override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View {
+    override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View { // required method
         return myView(position, convertView, parent)
     }
 
     private fun myView(position: Int, convertView: View?, parent: ViewGroup): View {
 
         val colorCode = getItem(position)
-        val view = convertView ?: LayoutInflater.from(context).inflate(
+        val view = convertView ?: LayoutInflater.from(context).inflate( // inflate the view
             R.layout.spinner_item,
             parent,
             false
@@ -38,6 +38,7 @@ class SpinnerAdapter(context: Context, colorCodeList: ArrayList<ColorCode>)
 
             if (colorCode.code != null) {
 
+                // populate spinner_item TextView and ImageView with corresponding text and color
                 tvCode.text = colorCode.code
                 ivColor.setColorFilter(ContextCompat.getColor(context, colorCode.color))
             }
