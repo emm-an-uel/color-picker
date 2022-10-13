@@ -10,6 +10,8 @@ import androidx.core.content.ContextCompat
 
 class FirstFragment : Fragment() {
 
+    lateinit var mapSubjectColor: MutableMap<String, Int>
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -21,19 +23,41 @@ class FirstFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val tvYourColor = view.findViewById<TextView>(R.id.tvYourColor)
+        initMapSubjectColor()
+
+        colorCodeTextViews()
+    }
+
+    private fun initMapSubjectColor() {
         val data = arguments
+        val subjectColorList = data!!.getParcelableArrayList<SubjectColor>("bundleSubjectColor")
 
-        val selectedColorCode = data!!.getParcelable<ColorCode>("bundleColorCode")
+        mapSubjectColor = mutableMapOf()
 
-        val code = selectedColorCode!!.code
-        val intColor = selectedColorCode.color // color integer
+        for (subjectColor in subjectColorList!!) {
+            val subject = subjectColor.subject
+            val color = subjectColor.color
 
-        val actualColor = ContextCompat.getColor(requireContext(), intColor) // convert into usable color
+            mapSubjectColor.put(subject, color)
+        }
+    }
 
-        tvYourColor.text = code
-        tvYourColor.setTextColor(actualColor)
+    private fun colorCodeTextViews() {
+        val tv1 = requireView().findViewById<TextView>(R.id.tv1)
+        val tv2 = requireView().findViewById<TextView>(R.id.tv2)
+        val tv3 = requireView().findViewById<TextView>(R.id.tv3)
+        val tv4 = requireView().findViewById<TextView>(R.id.tv4)
 
-        // TODO: implement color
+        val listTextViews = listOf<TextView>(tv1, tv2, tv3, tv4)
+
+        for (tv in listTextViews) {
+            val subject = tv.text.toString()
+
+            if (mapSubjectColor.containsKey(subject)) {
+                val intColor = mapSubjectColor[subject]
+                val actualColor = ContextCompat.getColor(requireContext(), intColor!!) // convert into usable color
+                tv.setTextColor(actualColor)
+            }
+        }
     }
 }

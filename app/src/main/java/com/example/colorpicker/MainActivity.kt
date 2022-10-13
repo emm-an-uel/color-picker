@@ -2,29 +2,34 @@ package com.example.colorpicker
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
-import android.widget.Button
-import android.widget.FrameLayout
-import android.widget.Spinner
+import android.view.View
+import android.widget.*
 import kotlinx.android.synthetic.main.activity_main.*
+import javax.security.auth.Subject
 
 class MainActivity : AppCompatActivity() {
 
-    lateinit var spinnerColor: Spinner
     lateinit var btnConfirm: Button
     lateinit var colorCodeList: ArrayList<ColorCode>
+    lateinit var subjectList: ArrayList<String>
+    lateinit var tableLayout: TableLayout
+
+    lateinit var spinnerIdList: ArrayList<Int>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        initColorArray()
+        tableLayout = findViewById(R.id.tableLayout)
 
-        setupSpinnerColor()
+        initColorCodeList()
+
+        setupSpinners()
+
         setupBtnConfirm()
     }
 
-    private fun initColorArray() {
+    private fun initColorCodeList() {
         colorCodeList = arrayListOf()
 
         val colorMap = mutableMapOf<String, Int>()
@@ -43,26 +48,79 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun setupSpinnerColor() {
+    private fun setupSpinners() {
+        subjectList = arrayListOf("Subject 1", "Subject 2", "Subject 3")
+        spinnerIdList = arrayListOf()
 
-        spinnerColor = findViewById(R.id.spinner)
-        val adapter = SpinnerAdapter(this, colorCodeList)
-        spinnerColor.adapter = adapter
+        for (subject in subjectList) {
+            // adding a subject textview
+            val tableRow = TableRow(this)
+
+            val tvSubject = TextView(this)
+            tvSubject.text = subject
+            tvSubject.textSize = 22f
+
+            tvSubject.setPadding(30, 30, 10, 0)
+
+            tableRow.addView(tvSubject)
+
+            // adding a spinner
+            val spinner = Spinner(this)
+            spinner.id = View.generateViewId()
+            spinnerIdList.add(spinner.id)
+            val adapter = SpinnerAdapter(this, colorCodeList)
+            spinner.adapter = adapter
+
+            spinner.layoutParams = TableRow.LayoutParams(
+                TableRow.LayoutParams.WRAP_CONTENT,
+                TableRow.LayoutParams.WRAP_CONTENT,
+                1f
+            )
+
+            spinner.setPadding(20, 15, 0, 0)
+
+            tableRow.addView(spinner)
+
+            tableLayout.addView(tableRow)
+        }
     }
 
     private fun setupBtnConfirm() {
         btnConfirm = findViewById(R.id.btnConfirm)
 
         btnConfirm.setOnClickListener {
-            val selectedColorCodeIndex = spinnerColor.selectedItemPosition
-            val selectedColorCode = colorCodeList[selectedColorCodeIndex]
-
-            val fragment = FirstFragment()
-            val bundle = Bundle()
-            bundle.putParcelable("bundleColorCode", selectedColorCode)
-            fragment.arguments = bundle
-
-            supportFragmentManager.beginTransaction().replace(R.id.frameLayout, fragment).commit()
+            saveSubjectColorPair()
         }
+    }
+
+    private fun saveSubjectColorPair() {
+
+        val subjectColorList: ArrayList<SubjectColor> = arrayListOf()
+
+        val numSpinners = spinnerIdList.size
+
+        var n = 0
+        while (n < numSpinners) {
+            val spinnerId = spinnerIdList[n]
+            val spinner = findViewById<Spinner>(spinnerId)
+
+            val colorCodeIndex = spinner.selectedItemPosition
+            val colorCode = colorCodeList[colorCodeIndex]
+            val color = colorCode.color
+
+            val subject = subjectList[n]
+
+            val subjectColor = SubjectColor(subject, color)
+            subjectColorList.add(subjectColor)
+
+            n++
+        }
+
+        val fragment = FirstFragment()
+        val bundle = Bundle()
+        bundle.putParcelableArrayList("bundleSubjectColor", subjectColorList)
+        fragment.arguments = bundle
+
+        supportFragmentManager.beginTransaction().replace(R.id.frameLayout, fragment).commit()
     }
 }
