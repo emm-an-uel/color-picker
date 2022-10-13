@@ -4,7 +4,9 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
+import android.widget.FrameLayout
 import android.widget.Spinner
+import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -52,8 +54,15 @@ class MainActivity : AppCompatActivity() {
         btnConfirm = findViewById(R.id.btnConfirm)
 
         btnConfirm.setOnClickListener {
-            val color = spinnerColor.selectedItem.toString()
-            // TODO: pass color as color and show in fragment_first
+            val selectedColorCodeIndex = spinnerColor.selectedItemPosition
+            val selectedColorCode = colorCodeList[selectedColorCodeIndex]
+
+            val fragment = FirstFragment()
+            val bundle = Bundle()
+            bundle.putParcelable("bundleColorCode", selectedColorCode)
+            fragment.arguments = bundle
+
+            supportFragmentManager.beginTransaction().replace(R.id.frameLayout, fragment).commit()
         }
     }
 }
