@@ -4,15 +4,11 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
     <string-array name="color_options">
-        <item>Red</item>
-        <item>Dark Blue</item>
-        <item>Dark Green</item>
-        <item>Orange</item>
-        <item>Pink</item>
-        <item>Light Blue</item>
-        <item>Light Green</item>
-        <item>Purple</item>
-        <item>Yellow</item>
+        <item>blue</item>
+        <item>red</item>
+        <item>yellow</item>
+        <item>green</item>
+        <item>pink</item>
     </string-array>
 
 </resources>
